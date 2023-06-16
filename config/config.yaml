@@ -1,0 +1,60 @@
+g: 9.81                         # Gravity
+
+# Initial value of tire scalings
+initial_values:
+  T_peak_fl:    0.5 #0.33                   # Initial value of peak scaling
+  T_slope_fl:   0.48 #1.0                  # Initial value of slope scaling
+  T_peak_fr:    0.5 #0.33                   # Initial value of peak scaling
+  T_slope_fr:   0.48 #1.0                  # Initial value of slope scaling
+  T_peak_rl:    0.2 #0.33                   # Initial value of peak scaling
+  T_slope_rl:   0.28 #1.0                  # Initial value of slope scaling
+  T_peak_rr:    0.2 #0.33                   # Initial value of peak scaling
+  T_slope_rr:   0.28 #1.0                  # Initial value of slope scaling
+  e_x_front:    1.58                        # Initial value of ellipse x
+  e_x_rear:     1.58                        # Initial value of ellipse x
+  e_y_front:    1.26                        # Initial value of ellipse y
+  e_y_rear:     1.26                        # Initial value of ellipse y
+
+
+
+# Car parameters
+car_params:
+  m:      204                                 # Mass (unsprung + sprung)
+  Iz:     220.0                               # Yaw inertia
+  lf:     0.7727                              # Front wheelbase
+  lr:     0.7573                              # Rear wheelbase
+  l_wb:   1.53                               # Total wheelbase
+  tw:     1.22                                # Trackwidth
+  r_tire: 0.224                               # Loaded tire radius
+  rho:    1.225                               # Air density
+  Cd:     1.2 #2.30                           # Drag coefficient
+  Cl:     3.2                                 # Lift coefficient
+  A:      1.22                                # Aero area
+  h:      0.25                                # COP height
+  R_res:  0.075                               # Rolling resistance
+  gr_w:   18.00                               # Wheel gear ratio
+  Iw:     0.4                                 # Wheel inertia
+
+
+# Tire prior parameters
+tire_params:
+  Bf: 60.3197
+  Cf: 0.9767
+  Df: -3.3663
+  Ef: 0
+  Hf: 0.0
+  Vf: 0.0
+  
+
+  Br: 60.3197
+  Cr: 0.9767
+  Dr: -3.3663
+  Er: 0 
+  Hr: 0.0
+  Vr: 0.0
+
+
+  T_peak_front: 0.37  #0.4 #0.37
+  T_slope_front: 0.4
+  T_peak_rear: 0.37 #0.4 #0.37
+  T_slope_rear: 0.4
