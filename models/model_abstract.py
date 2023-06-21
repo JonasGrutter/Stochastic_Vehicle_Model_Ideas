@@ -76,6 +76,39 @@ class AbstractModel:
 
         return t,x
     
+
+
+    def do_open_loop_sim_from_fsg(self, file_path):
+            # recap of times and states
+            t = [0]
+            x = self.state
+            # Load the CSV file
+            data = np.genfromtxt(file_path, delimiter=',', skip_header=0, names=True, dtype=None)
+            
+            # Access each column by its tag
+            Fx_fl = data['Fx_fl']
+            Fx_fr = data['Fx_fr']
+            Fx_rl = data['Fx_rl']
+            Fx_rr = data['Fx_rr']
+            steering_angle = data['steering_angle']
+            
+            # While loop
+            index = 0
+            while t[-1] < self.open_loop_tf-1:
+                
+                self.t.append(self.t[-1] + self.dt)
+
+                inputs =  [steering_angle[index], Fx_fl[index], Fx_fr[index], Fx_rl[index], Fx_rr[index]]
+                # Do 1 step
+                self.RK45_1step(self.dt, inputs)
+                # Update time and state
+                t.append(t[-1] + self.dt)
+                x = np.row_stack((x, self.state))
+                index += 1
+
+
+            return t,x
+    
     def kinematik_model_radius(self, steering_angle):
         L = self.car.lf + self.car.lr
         radius = L/(np.tan(steering_angle)*np.cos(np.arctan((self.car.lr/L)*np.tan(steering_angle))))

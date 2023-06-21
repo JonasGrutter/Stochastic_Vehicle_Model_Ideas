@@ -2,8 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from IPython import display
 
-
-
 data = np.genfromtxt('./Data/Data_four_wheel/all_thetas_dirac.csv', delimiter=',', names=True, dtype=None)
 T_peak = data['T_peak']
 T_slope = data['T_slope']
@@ -17,29 +15,36 @@ colors = ['red' if value == 0 else 'blue' for value in accepted]
 # Initialize the plot
 plt.figure()
 legend_elements = [
-        plt.Line2D([0], [0], marker='X', color='w', label='Goal', markerfacecolor='green', markersize=8),
-        plt.Line2D([0], [0], marker='o', color='w', label='Accepted', markerfacecolor='blue', markersize=8),
-        plt.Line2D([0], [0], marker='o', color='w', label='Rejected', markerfacecolor='red', markersize=8)
-    ]
+    plt.Line2D([0], [0], marker='X', color='w', label='Start', markerfacecolor='orange', markersize=8),
+    plt.Line2D([0], [0], marker='X', color='w', label='Goal', markerfacecolor='green', markersize=8),
+    plt.Line2D([0], [0], marker='o', color='w', label='Accepted', markerfacecolor='blue', markersize=8),
+    plt.Line2D([0], [0], marker='o', color='w', label='Rejected', markerfacecolor='red', markersize=8)
+]
+cross_size = 50
 plt.legend(handles=legend_elements, loc='upper left')
-plt.scatter(0.37, 0.4, color='green', marker='x')
+plt.scatter(0.37, 0.4, color='green', marker='x', s=cross_size)
+plt.scatter(0.5, 0.5, color='orange', marker='x', s=cross_size)
 plt.pause(10)
+
 # Iterate over the data points
-for i in range(len(T_peak)//2):
+for i in range(len(T_peak) // 2):
     # Clear the previous plot
     plt.clf()
 
     # Plot the points up to the current iteration
     for j in range(i):
-        plt.scatter(0.37, 0.4, color='green', marker='x')
+        plt.scatter(0.37, 0.4, color='green', marker='x', s=cross_size)
+        plt.scatter(0.5, 0.5, color='orange', marker='x', s=cross_size)
         plt.scatter(T_peak[j], T_slope[j], color=colors[j], marker='o')
 
     # Set plot properties
-    plt.xlabel('T_peak')
-    plt.ylabel('T_slope')
+    plt.xlabel(r'$T_{peak} \rm [\;] $')
+    plt.ylabel(r'$T_{slope} \rm [\;]$')
+    plt.title(f'Iteration {i+1}')
 
     # Display the fixed legend
     legend_elements = [
+        plt.Line2D([0], [0], marker='X', color='w', label='Start', markerfacecolor='orange', markersize=8),
         plt.Line2D([0], [0], marker='X', color='w', label='Goal', markerfacecolor='green', markersize=8),
         plt.Line2D([0], [0], marker='o', color='w', label='Accepted', markerfacecolor='blue', markersize=8),
         plt.Line2D([0], [0], marker='o', color='w', label='Rejected', markerfacecolor='red', markersize=8)
@@ -57,8 +62,9 @@ for i in range(len(T_peak)//2):
 plt.clf()
 
 # Set plot properties
-plt.xlabel('T_peak')
-plt.ylabel('T_slope')
+plt.xlabel('T_peak \rm [\;]')
+plt.ylabel('T_slope \rm [\;]')
+plt.title('Final Result')
 
 # Plot all the points at once with fixed legend
 for i in range(len(T_peak)):

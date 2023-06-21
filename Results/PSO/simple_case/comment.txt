@@ -1,0 +1,5 @@
+Sample from data generation biaised towards right
+Mean perectly infered but not variance
+fit: (0.09920733655628708, 2.1040371380863753e-09)
+
+less overfit fit: (0.09881319387734996, 0.0028138296511636
