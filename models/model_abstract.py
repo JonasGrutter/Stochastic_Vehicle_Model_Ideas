@@ -58,10 +58,12 @@ class AbstractModel:
         Fx_rl = data['Fx_rl']
         Fx_rr = data['Fx_rr']
         steering_angle = data['steering_angle']
+
+   
         
         # While loop
         index = 0
-        while t[-1] < self.open_loop_tf-1:
+        while t[-1] < self.open_loop_tf-1:#-1
             
             self.t.append(self.t[-1] + self.dt)
 
@@ -77,25 +79,85 @@ class AbstractModel:
         return t,x
     
 
+    def do_open_loop_sim_from_np_array(self, command_array, state_array):
+        # recap of times and states
+        t = [0]
+        self.state = np.array([state_array[0,0], state_array[0,1], state_array[0,2], state_array[0,3], state_array[0,4], state_array[0,5]])
+        x = self.state
+        
+        # Access each column by its tag
+        Fx_fl = command_array[:,0]
+        Fx_fr = command_array[:,1]
+        Fx_rl = command_array[:,2]
+        Fx_rr = command_array[:,3]
+        steering_angle = command_array[:,4]
 
-    def do_open_loop_sim_from_fsg(self, file_path):
+   
+        
+        # While loop
+        index = 0
+        while t[-1] < self.open_loop_tf-2*self.dt:#-1
+                   
+            self.t.append(self.t[-1] + self.dt)
+
+            inputs =  [steering_angle[index], Fx_fl[index], Fx_fr[index], Fx_rl[index], Fx_rr[index]]
+            # Do 1 step
+            self.RK45_1step(self.dt, inputs)
+            # Update time and state
+            t.append(t[-1] + self.dt)
+            x = np.row_stack((x, self.state))
+            index += 1
+
+
+        return t,x
+    
+    def store_amzsim_manoeuvers_position(self):
+        file_path = '/Users/jonas/Desktop/intergation_model/open_loop_inputs/car_command_for_sim_PLEASE.csv'
+        t,data = self.do_open_loop_sim_from_csv(file_path)
+
+        header = 'x,y,yaw,vx,vy,dyaw'  # Column names
+        np.savetxt('/Users/jonas/Desktop/intergation_model/open_loop_inputs/ref_trajectory.csv', data, delimiter=',', header=header, comments='')
+        print('Reference trajectories for amzsim manoeuvers has been saved!')
+
+
+    def do_open_loop_sim_from_amzsim_maoeuvers(self, chunk_size):
             # recap of times and states
             t = [0]
-            x = self.state
+            
             # Load the CSV file
-            data = np.genfromtxt(file_path, delimiter=',', skip_header=0, names=True, dtype=None)
+            file_path_commands = '/Users/jonas/Desktop/intergation_model/open_loop_inputs/car_command_for_sim_PLEASE.csv'
+            commands = np.genfromtxt(file_path_commands, delimiter=',', skip_header=0, names=True, dtype=None)
+            
+            file_path_ref_traj = '/Users/jonas/Desktop/intergation_model/open_loop_inputs/ref_trajectory.csv'
+            ref_traj = np.genfromtxt(file_path_ref_traj, delimiter=',', skip_header=0, names=True, dtype=None)
             
             # Access each column by its tag
-            Fx_fl = data['Fx_fl']
-            Fx_fr = data['Fx_fr']
-            Fx_rl = data['Fx_rl']
-            Fx_rr = data['Fx_rr']
-            steering_angle = data['steering_angle']
+            Fx_fl = commands['Fx_fl']
+            Fx_fr = commands['Fx_fr']
+            Fx_rl = commands['Fx_rl']
+            Fx_rr = commands['Fx_rr']
+            steering_angle = commands['steering_angle']
+
+            x_ref = ref_traj['x']
+            y_ref = ref_traj['y']
+            yaw_ref = ref_traj['yaw']
+            
+            vx_ref = ref_traj['vx']
+            vy_ref = ref_traj['vy']
+            dyaw_ref = ref_traj['dyaw']
+
+            ref_traj = np.hstack([x_ref.reshape(-1,1), y_ref.reshape(-1,1), yaw_ref.reshape(-1,1), vx_ref.reshape(-1,1), vy_ref.reshape(-1,1), dyaw_ref.reshape(-1,1)])
+            
             
             # While loop
             index = 0
-            while t[-1] < self.open_loop_tf-1:
+            self.state = np.array([x_ref[0],y_ref[0],yaw_ref[0],vx_ref[0],vy_ref[0],dyaw_ref[0]])
+            x = self.state
+            while t[-1] < self.open_loop_tf-2*self.dt:
                 
+                if index%chunk_size == 0 and index !=0:
+                    self.state = np.array([x_ref[index],y_ref[index],yaw_ref[index],vx_ref[index],vy_ref[index],dyaw_ref[index]])
+
                 self.t.append(self.t[-1] + self.dt)
 
                 inputs =  [steering_angle[index], Fx_fl[index], Fx_fr[index], Fx_rl[index], Fx_rr[index]]
@@ -105,9 +167,15 @@ class AbstractModel:
                 t.append(t[-1] + self.dt)
                 x = np.row_stack((x, self.state))
                 index += 1
+            
+            l2_norm_position = np.linalg.norm(ref_traj[:,:2] - x[:,:2], axis=1).sum()
+            l2_norm_velocity = np.linalg.norm(ref_traj[:,2:] - x[:,2:], axis=1).sum()
 
+            w1 = 0.5
+            w2 = 0.5
+            kpi = w1*l2_norm_position+w2*l2_norm_velocity
 
-            return t,x
+            return t,x,kpi
     
     def kinematik_model_radius(self, steering_angle):
         L = self.car.lf + self.car.lr

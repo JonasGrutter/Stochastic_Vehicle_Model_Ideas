@@ -52,9 +52,9 @@ class BicycleModel(AbstractModel):
         
         
         # Accelerations
-        #ax = (F_rx + F_fx * np.cos(steering) - Fx_drag - F_res) / self.car.m
-        therm_for_sol = mu_fy*np.sin(steering)*((self.car.lf/self.car.l_wb)*(self.car.m*self.g+Fz_lift))
-        ax = (F_rx + F_fx * np.cos(steering) - Fx_drag - F_res - therm_for_sol ) / (self.car.m *(1+np.sin(steering)*mu_fy*self.car.h/self.car.l_wb))
+        ax = (F_rx + F_fx * np.cos(steering) - Fx_drag - F_res) / self.car.m
+        #therm_for_sol = mu_fy*np.sin(steering)*((self.car.lf/self.car.l_wb)*(self.car.m*self.g+Fz_lift))
+        #ax = (F_rx + F_fx * np.cos(steering) - Fx_drag - F_res - therm_for_sol ) / (self.car.m *(1+np.sin(steering)*mu_fy*self.car.h/self.car.l_wb))
 
         # Vertical force
         F_fz = (self.car.m*self.g + Fz_lift) * self.car.lr/self.car.l_wb - self.car.m * ax * self.car.h/self.car.l_wb - Fx_drag * self.car.h/self.car.l_wb
