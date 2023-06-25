@@ -6,6 +6,7 @@ from models.model_abstract import AbstractModel
 class FourWheelModel_load_transfer(AbstractModel):
     def __init__(self, dt, open_loop_tf, T_peak, T_slope)-> None:
         
+
         super().__init__(dt,open_loop_tf, T_peak, T_slope)  # Call the base class constructor
         # Car parameters
         
@@ -15,6 +16,9 @@ class FourWheelModel_load_transfer(AbstractModel):
         self.state = np.zeros(6) 
 
         self.slip_angles = np.zeros(4)
+        self.slips = []
+        self.comp_slips = []
+
         
 
              
@@ -54,6 +58,9 @@ class FourWheelModel_load_transfer(AbstractModel):
 
         current_slip = np.array([SA_fl, SA_fr, SA_rl, SA_rr])
         self.slip_angles = np.row_stack((self.slip_angles, current_slip))
+        self.slips.append(SA_fl)
+        SA_fl_comp = np.arctan2(vy + self.car.lf * dyaw, vx - self.car.tw/2 * dyaw) - steering 
+        self.comp_slips.append(SA_fl_comp)
         # Longitudinal tire force
         F_fx = Fx_FL + Fx_FR
         F_rx = Fx_RL + Fx_RR

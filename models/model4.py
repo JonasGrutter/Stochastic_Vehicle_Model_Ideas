@@ -15,6 +15,7 @@ class FourWheelModel(AbstractModel):
         self.state = np.zeros(6) 
 
         self.slip_angles = np.zeros(4)
+        self.slips = []
         
 
              
@@ -45,6 +46,7 @@ class FourWheelModel(AbstractModel):
         SA_rr = np.arctan2(vy - self.car.lr * dyaw, vx + self.car.tw/2 * dyaw)
         current_slip = np.array([SA_fl, SA_fr, SA_rl, SA_rr])
         self.slip_angles = np.row_stack((self.slip_angles, current_slip))
+        self.slips.append(SA_fl)
         # Longitudinal tire force
         F_fx = Fx_FL + Fx_FR
         F_rx = Fx_RL + Fx_RR

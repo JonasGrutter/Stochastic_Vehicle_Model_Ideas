@@ -38,9 +38,9 @@ for i in range(len(T_peak) // 2):
         plt.scatter(T_peak[j], T_slope[j], color=colors[j], marker='o')
 
     # Set plot properties
-    plt.xlabel(r'$T_{peak} \rm [\;] $')
-    plt.ylabel(r'$T_{slope} \rm [\;]$')
-    plt.title(f'Iteration {i+1}')
+    plt.xlabel(r'$ \theta_{T_{peak}} \rm [\;] $')
+    plt.ylabel(r'$ \theta_{T_{slope}} \rm [\;]$')
+    #plt.title(f'Iteration {i+1}')
 
     # Display the fixed legend
     legend_elements = [

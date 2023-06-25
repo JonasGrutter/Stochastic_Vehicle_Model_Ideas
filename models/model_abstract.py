@@ -28,6 +28,7 @@ class AbstractModel:
     def do_open_loop_sim_cst_inputs(self, t0, inputs):
         # recap of times and states
         t = [t0]
+        self.state = np.array([0,0,0, 4, 0.5,1.0])
         x = self.state
         
         # While loop
